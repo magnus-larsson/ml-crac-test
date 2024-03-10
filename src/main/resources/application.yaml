@@ -1,0 +1,11 @@
+myValue: DEFAULT VALUE
+
+---
+spring.config.activate.on-profile: p1
+
+myValue: P1 VALUE
+
+---
+spring.config.activate.on-profile: p2
+
+myValue: P2 VALUE

@@ -1,0 +1,11 @@
+myValue: RUNTIME DEFAULT VALUE
+
+---
+spring.config.activate.on-profile: p1
+
+myValue: RUNTIME P1 VALUE
+
+---
+spring.config.activate.on-profile: p2
+
+myValue: RUNTIME P2 VALUE
