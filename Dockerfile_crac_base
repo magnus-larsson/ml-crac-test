@@ -1,0 +1,14 @@
+FROM ubuntu:22.04
+WORKDIR app
+
+RUN apt-get update -y
+
+ENV JAVA_HOME /opt/zulu21.28.89-ca-crac-jdk21.0.0-linux_aarch64
+ENV PATH $JAVA_HOME/bin:$PATH
+
+ADD "https://cdn.azul.com/zulu/bin/zulu21.28.89-ca-crac-jdk21.0.0-linux_aarch64.tar.gz" /opt/
+RUN cd /opt/ && tar -xzf zulu21.28.89-ca-crac-jdk21.0.0-linux_aarch64.tar.gz && rm zulu21.28.89-ca-crac-jdk21.0.0-linux_aarch64.tar.gz && \
+    chown root:root $JAVA_HOME/lib/criu && \
+    chmod u+s $JAVA_HOME/lib/criu
+
+ADD crac/checkpoint.bash ./checkpoint.bash
