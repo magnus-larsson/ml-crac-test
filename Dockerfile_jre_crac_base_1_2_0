@@ -1,0 +1,22 @@
+# Can azul/zulu-openjdk:21.0.3-21.34-jdk-crac be used to build the image, see
+# - https://hub.docker.com/layers/azul/zulu-openjdk/21.0.3-21.34-jdk-crac/images/sha256-f436bdec227a54b133099693d9933e5b021db9e6fa696cca824d9b960fc5ee51?context=explore
+
+FROM ubuntu:22.04
+WORKDIR app
+
+RUN apt-get update -y
+
+ENV ZULU_VER zulu21.34.19-ca-crac
+ENV JAVA_VER jre21.0.3
+ENV JAVA_DIST_FILE $ZULU_VER-$JAVA_VER-linux_aarch64
+
+ENV JAVA_HOME /opt/$JAVA_DIST_FILE
+ENV PATH $JAVA_HOME/bin:$PATH
+
+ADD "https://cdn.azul.com/zulu/bin/$JAVA_DIST_FILE.tar.gz" /opt/
+RUN cd /opt/ && tar -xzf $JAVA_DIST_FILE.tar.gz && rm $JAVA_DIST_FILE.tar.gz && \
+    chown root:root $JAVA_HOME/lib/criu && \
+    chmod u+s $JAVA_HOME/lib/criu
+
+ADD crac/checkpoint-automatic.bash ./checkpoint-automatic.bash
+ADD crac/checkpoint-manual.bash    ./checkpoint-manual.bash

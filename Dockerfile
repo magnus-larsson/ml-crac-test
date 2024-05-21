@@ -5,6 +5,7 @@ FROM magnuslarsson/crac_base:1.0.0 as builder
 
 ADD ./build/libs/*.jar app.jar
 ADD ./runtime-configuration/application.yaml ./runtime-configuration/application.yaml
+# java -Dspring.context.checkpoint=onRefresh -XX:CRaCCheckpointTo=./checkpoint -jar app.jar
 RUN --security=insecure SPRING_PROFILES_ACTIVE=p2 SPRING_CONFIG_LOCATION=file:./runtime-configuration/application.yaml ./checkpoint.bash
 
 # TODO: Use a base image optimized for runtime

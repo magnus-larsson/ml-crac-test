@@ -1,5 +1,12 @@
 # Commands
 
+## Background
+
+1. <https://www.azul.com/products/components/crac/>
+2. <https://bell-sw.com/blog/how-to-use-crac-with-java-applications/>
+3. <https://foojay.io/today/springboot-3-2-crac/>
+4. <https://foojay.io/today/how-to-run-a-java-application-with-crac-in-a-docker-container/
+
 ## Build
 
 Build:
@@ -28,9 +35,13 @@ Configured value: RUNTIME P1 VALUE
 Build base image:
 
 ```
-docker build -f Dockerfile_crac_base -t magnuslarsson/crac_base:1.0.0 .
+docker build -f Dockerfile_jdk_crac_base_1_2_0 -t magnuslarsson/jdk_crac_base:1.2.0 .
 docker login
-docker push magnuslarsson/crac_base:1.0.0
+docker push magnuslarsson/jdk_crac_base:1.2.0
+
+docker build -f Dockerfile_jre_crac_base_1_2_0 -t magnuslarsson/jre_crac_base:1.2.0 .
+docker login
+docker push magnuslarsson/jre_crac_base:1.2.0
 ```
 
 Create unsecure buildx builder:
@@ -41,19 +52,28 @@ docker buildx create --driver-opt image=moby/buildkit:master  \
                      --use --name insecure-builder \
                      --buildkitd-flags '--allow-insecure-entitlement security.insecure'
 # ML version:
+# Use network=host for manual, not for automatic checkpoints?
 docker buildx create \
+ --driver-opt network=host \
  --use --name ml-insecure-builder \
- --buildkitd-flags '--allow-insecure-entitlement security.insecure'
+ --buildkitd-flags '--allow-insecure-entitlement security.insecure --allow-insecure-entitlement network.host'
 ```
 
 Build OCI image:
 ```
-docker buildx --builder ml-insecure-builder build --allow security.insecure -f Dockerfile -t  ml-crac-test --progress=plain --load .
+docker buildx --builder ml-insecure-builder build --allow network.host --allow security.insecure -f Dockerfile -t  ml-crac-test --progress=plain --load .
 ```
 
 Run OCI image:
+
+According by DOC?:
 ```
 docker run -it --rm -p 8080:8080 --cap-add=CHECKPOINT_RESTORE --cap-add=SETPCAP ml-crac-test 
+```
+
+By my own tests:
+```
+docker run -it --rm -p 8080:8080 --cap-add=CHECKPOINT_RESTORE ml-crac-test 
 ```
 
 ```
